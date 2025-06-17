@@ -4,9 +4,28 @@ import { model, Schema } from 'mongoose';
 const app: Application = express();
 
 const noteSchema = new Schema({
-    title: String,
-    content: String,
-    publishDate: Date
+    title: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    content: {
+        type: String,
+        default: '',
+    },
+    category: {
+        type: String,
+        enum: ['personal', 'work', 'study', 'other'],
+        default: 'personal'
+    },
+    pinned: {
+        type: Boolean,
+        default: false
+    },
+    tags: {
+        label: { type: String, required: true },
+        color: { type: String, default: 'Black' }
+    }
 });
 
 const Note = model('Note', noteSchema);
@@ -15,20 +34,22 @@ app.get('/', (req: Request, res: Response) => {
     res.send('Welcome to note app');
 });
 
-app.post('/create-note',async (req: Request, res: Response) => {
+app.post('/create-note', async (req: Request, res: Response) => {
     const myNote = new Note({
-        title: 'learning mongoose',
-        content: 'I am learning mongoose',
-        publishDate: '2020-04-12'
+        title: 'Learning super excited mongoose',
+        tags: {
+            label: 'database'
+        }
     });
 
-    await myNote.save()
-    
+    await myNote.save();
+
     res.status(201).json({
         success: true,
-        message: 'Note created successfully',
+        message: 'Note has been created successfully',
         note: myNote
     });
 });
+
 
 export default app;
