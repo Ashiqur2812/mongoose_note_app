@@ -1,7 +1,7 @@
 export interface INote {
     title: string,
     content: string,
-    category: string,
+    category: 'personal' | 'work' | 'study' | 'other',
     pinned: boolean,
     tags: {
         label: string,

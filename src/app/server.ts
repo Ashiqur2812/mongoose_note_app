@@ -1,9 +1,7 @@
 import { Server } from 'http';
 import app from './app';
 import mongoose from 'mongoose';
-
 let server: Server;
-
 const PORT = 4000;
 
 async function main() {
