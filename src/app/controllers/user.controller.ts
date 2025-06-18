@@ -37,15 +37,15 @@ userRoutes.get('/:userId', async (req: Request, res: Response) => {
 userRoutes.post('/create-user', async (req: Request, res: Response) => {
     try {
 
-        const body = await createUserZodSchema.parseAsync(req.body);
-        console.log(body, 'zod body');
+        // const body = await createUserZodSchema.parseAsync(req.body);
+        // console.log(body, 'zod body');
 
-        // const body = req.body;
-        // const user = await User.create(body);
+        const body = req.body;
+        const user = await User.create(body);
         res.status(201).json({
             success: true,
             message: 'User data has been created successfully',
-            user: {}
+            user: user
         });
     } catch (error: any) {
         console.log(error);
