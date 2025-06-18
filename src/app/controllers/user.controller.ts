@@ -1,7 +1,17 @@
 import express, { Request, Response } from 'express';
 import { User } from '../models/user.models';
+import { z } from 'zod';
 
 export const userRoutes = express.Router();
+
+const createUserZodSchema = z.object({
+    firstName: z.string(),
+    lastName: z.string(),
+    age: z.number(),
+    email: z.string(),
+    password: z.string(),
+    role: z.string().optional()
+});
 
 userRoutes.get('/', async (req: Request, res: Response) => {
     const user = await User.find();
@@ -25,14 +35,26 @@ userRoutes.get('/:userId', async (req: Request, res: Response) => {
 });
 
 userRoutes.post('/create-user', async (req: Request, res: Response) => {
-    const body = req.body;
-    const user = await User.create(body);
+    try {
 
-    res.status(201).json({
-        success: true,
-        message: 'User data has been created successfully',
-        user
-    });
+        const body = await createUserZodSchema.parseAsync(req.body);
+        console.log(body, 'zod body');
+
+        // const body = req.body;
+        // const user = await User.create(body);
+        res.status(201).json({
+            success: true,
+            message: 'User data has been created successfully',
+            user: {}
+        });
+    } catch (error: any) {
+        console.log(error);
+        res.status(400).json({
+            success: false,
+            message: error.message,
+            error
+        });
+    }
 });
 
 userRoutes.patch('/:userId', async (req: Request, res: Response) => {
