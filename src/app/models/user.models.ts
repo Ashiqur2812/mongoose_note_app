@@ -4,24 +4,41 @@ import { IUser } from "../interfaces/user.interface";
 const userSchema = new Schema<IUser>({
     email: {
         type: String,
-        required: true
+        required: true,
+        lowercase: true,
+        trim: true,
+        unique: true
     },
     firstName: {
         type: String,
-        required: true
+        required: true,
+        trim: true,
+        minlength: [3, 'First name must be at least 3 characters, got {VALUE}'],
+        maxlength: 10
     },
     lastName: {
         type: String,
-        required: true
+        required: true,
+        trim: true,
+        minlength: [3, 'Last name must be at least 3 characters, got {VALUE}'],
+        maxlength: 10
+    },
+    age: {
+        type: Number,
+        required: true,
+        min: [18, 'Age must be at least 18, got {VALUE}'],
+        max: 60
     },
     password: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     role: {
         type: String,
-        enum: ['user', 'admin',],
-        default: 'user'
+        uppercase: true,
+        enum: ['USER', 'ADMIN', 'SUPERADMIN'],
+        default: 'USER'
     }
 },
     {
@@ -30,4 +47,4 @@ const userSchema = new Schema<IUser>({
     }
 );
 
-export const User = model<IUser>('User', userSchema);
+export const User = model('User', userSchema);
