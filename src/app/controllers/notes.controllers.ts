@@ -1,10 +1,10 @@
 import express, { Request, Response } from "express";
 import { Note } from "../models/notes.models";
 
-export const notesRoutes = express.Router()
+export const notesRoutes = express.Router();
 
 notesRoutes.get('/', async (req: Request, res: Response) => {
-    const notes = await Note.find();
+    const notes = await Note.find().populate('user');
     res.status(200).json({
         success: true,
         message: 'everything is ok here',
