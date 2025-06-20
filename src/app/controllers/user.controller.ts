@@ -15,12 +15,24 @@ const createUserZodSchema = z.object({
 });
 
 userRoutes.get('/', async (req: Request, res: Response) => {
-    const user = await User.find();
+    const userEmail = req.query.email ? req.query.email : '';
+    console.log(userEmail);
+
+    let users = [];
+    // if (userEmail) {
+    //     users = await User.find({ email: userEmail });
+    // } else {
+    //     users = await User.find();
+    // }
+
+    // users = await User.find().sort({ email: 'ascending' });
+    // users = await User.find().sort({ email: 'descending' });
+    users = await User.find().limit(2);
 
     res.status(200).json({
         success: true,
         message: 'Everything is fine',
-        user
+        users
     });
 });
 
