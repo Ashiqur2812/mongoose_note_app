@@ -56,7 +56,9 @@ const userSchema = new Schema<IUser, UserStaticMethod, UserInstanceMethod>({
 },
     {
         versionKey: false,
-        timestamps: true
+        timestamps: true,
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true }
     }
 );
 
@@ -89,6 +91,10 @@ userSchema.post('findOneAndDelete', async function (doc, next) {
         await Note.deleteMany({ user: doc._id });
     }
     next();
+});
+
+userSchema.virtual('fullName').get(function () {
+    return `${this.firstName} ${this.lastName}`;
 });
 
 
