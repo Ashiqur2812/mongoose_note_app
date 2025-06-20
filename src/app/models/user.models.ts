@@ -1,6 +1,7 @@
-import { model, Schema } from "mongoose";
-import { IAddress, IUser } from "../interfaces/user.interface";
+import { Model, model, Schema } from "mongoose";
+import { IAddress, IUser, UserInstanceMethod, UserStaticMethod } from "../interfaces/user.interface";
 import validator from 'validator';
+import bcrypt from 'bcryptjs';
 
 const addressSchema = new Schema<IAddress>({
     city: { type: String },
@@ -10,21 +11,13 @@ const addressSchema = new Schema<IAddress>({
     { _id: false }
 );
 
-const userSchema = new Schema<IUser>({
+const userSchema = new Schema<IUser, UserStaticMethod, UserInstanceMethod>({
     email: {
         type: String,
         required: [true, 'Email became common. Necessary to make unique email'],
         lowercase: true,
         trim: true,
         unique: true,
-        // validate: {
-        //     validator: function (value) {
-        //         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-        //     },
-        //     message: function (props) {
-        //         return `Email ${props.value} is not valid email`;
-        //     }
-        // }
         validate: [validator.isEmail, 'Invalid email sent, got {VALUE}']
     },
     firstName: {
@@ -66,4 +59,12 @@ const userSchema = new Schema<IUser>({
     }
 );
 
-export const User = model('User', userSchema);
+userSchema.method('hashPassword', async function (plainPassword: any) {
+    return await bcrypt.hash(plainPassword, 10);
+});
+
+userSchema.static('hashPassword', async function (plainPassword: any) {
+    return await bcrypt.hash(plainPassword, 10);
+});
+
+export const User = model<IUser, UserStaticMethod>('User', userSchema);
